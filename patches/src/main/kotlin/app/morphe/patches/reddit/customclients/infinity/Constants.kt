@@ -12,6 +12,11 @@ import app.morphe.patcher.patch.Compatibility
 
 internal val InfinityCompatible = arrayOf(
     Compatibility(
+        name = "Infinity for Reddit",
+        packageName = "ml.docilealligator.infinityforreddit",
+        targets = listOf(AppTarget(version = null))
+    ),
+    Compatibility(
         name = "Infinity for Reddit+",
         packageName = "ml.docilealligator.infinityforreddit.plus",
         targets = listOf(AppTarget(version = null))
