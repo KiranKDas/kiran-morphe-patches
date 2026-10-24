@@ -554,8 +554,8 @@ Full guide and login troubleshooting: [patcheddit — What if I don't have a cli
 | Release tag | `morphe-patches-123` |
 | Asset | `patches-1.4.123.mpp` |
 | SHA256 | `cee4fb7f7a084260c4a9a8a63b1decdfd4f6358b75d54f7d8990afba6e886eec` |
-| Manager JSON | `https://raw.githubusercontent.com/brealorg/breal-morphe-patches/main/patches-bundle.json` |
-| Download URL | `https://github.com/brealorg/breal-morphe-patches/releases/download/morphe-patches-123/patches-1.4.123.mpp` |
+| Manager JSON | `https://raw.githubusercontent.com/KiranKDas/kiran-morphe-patches/main/patches-bundle.json` |
+| Download URL | `https://github.com/KiranKDas/kiran-morphe-patches/releases/download/morphe-patches-123/patches-1.4.123.mpp` |
 
 SHA256: `cee4fb7f7a084260c4a9a8a63b1decdfd4f6358b75d54f7d8990afba6e886eec`
 
