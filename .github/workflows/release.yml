@@ -170,6 +170,7 @@ jobs:
           set -euo pipefail
 
           python3 scripts/releasectl.py publish \
+            --repository "$GITHUB_REPOSITORY" \
             --version "$VERSION" \
             --tag "$TAG" \
             --release-notes-file "$NOTES_FILE" \
