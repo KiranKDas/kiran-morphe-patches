@@ -134,7 +134,7 @@ def main() -> int:
     tag = args.tag or default_tag_for(version)
     mpp_name = f"patches-{version}.mpp"
     mpp_path = Path(args.mpp) if args.mpp else root / "patches" / "build" / "libs" / mpp_name
-    expected_url = f"https://github.com/brealorg/breal-morphe-patches/releases/download/{tag}/{mpp_name}"
+    repo = __import__("os").environ.get("GITHUB_REPOSITORY") or "KiranKDas/kiran-morphe-patches"`n    expected_url = f"https://github.com/{repo}/releases/download/{tag}/{mpp_name}"
 
     gradle = read(gradle_path)
     readme = read(readme_path)
