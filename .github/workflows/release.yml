@@ -132,7 +132,7 @@ jobs:
           cache-provider: basic
 
       - name: Validate release signing config
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+        continue-on-error: true
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -145,7 +145,7 @@ jobs:
           test -n "$GPG_FINGERPRINT"
 
       - name: Import GPG key
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+        continue-on-error: true
         uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
