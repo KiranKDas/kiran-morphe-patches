@@ -178,6 +178,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Contract marker: --protected-main-commit "$RELEASE_COMMIT"
 
           MPP_FILE=$(find patches/build/libs -name "*.mpp" | head -n 1)
           if [ -z "$MPP_FILE" ] || [ ! -f "$MPP_FILE" ]; then
