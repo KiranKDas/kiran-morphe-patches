@@ -4,10 +4,10 @@ patches {
     about {
         name = "Breal Morphe Patches"
         description = "Morphe patch bundle for Boost for Reddit, Imgur, and other supported apps"
-        source = "https://github.com/brealorg/breal-morphe-patches.git"
+        source = "https://github.com/KiranKDas/kiran-morphe-patches.git"
         author = "wchill + brealorg"
         contact = "w@chill.dev"
-        website = "https://github.com/brealorg/breal-morphe-patches"
+        website = "https://github.com/KiranKDas/kiran-morphe-patches"
         license = "Additional conditions under GPL section 7 apply: attribution and project name restrictions. See LICENSE file."
     }
 }
