@@ -180,18 +180,26 @@ jobs:
           set -euo pipefail
           # Contract marker: --protected-main-commit "$RELEASE_COMMIT"
 
-          MPP_FILE=$(find patches/build/libs -name "*.mpp" | head -n 1)
+          MPP_FILE="patches/build/libs/patches-${VERSION}.mpp"
+          if [ ! -f "$MPP_FILE" ]; then
+            MPP_FILE=$(find patches/build/libs -name "patches-${VERSION}.mpp" ! -name "*-sources*" | head -n 1)
+          fi
           if [ -z "$MPP_FILE" ] || [ ! -f "$MPP_FILE" ]; then
-            echo "ERROR: MPP file not found in patches/build/libs"
+            echo "ERROR: Binary MPP file patches-${VERSION}.mpp not found in patches/build/libs"
             exit 1
           fi
+
+          ./tools/check-mpp-release-asset.sh "$MPP_FILE"
 
           MPP_NAME=$(basename "$MPP_FILE")
           MPP_SHA256=$(sha256sum "$MPP_FILE" | awk '{print $1}')
           echo "$MPP_SHA256  $MPP_NAME" > "${MPP_FILE}.sha256"
-          echo "Built MPP: $MPP_NAME with SHA256: $MPP_SHA256"
+          echo "Built binary MPP: $MPP_NAME with SHA256: $MPP_SHA256"
 
           UPLOAD_FILES=("$MPP_FILE" "${MPP_FILE}.sha256")
+          if [ -f "patches/build/libs/patches-${VERSION}-sources.mpp" ]; then
+            UPLOAD_FILES+=("patches/build/libs/patches-${VERSION}-sources.mpp")
+          fi
 
           if [ -n "${GPG_FINGERPRINT:-}" ] && command -v gpg >/dev/null 2>&1 && gpg --list-secret-keys | grep -q "sec"; then
             echo "Signing MPP with GPG..."
