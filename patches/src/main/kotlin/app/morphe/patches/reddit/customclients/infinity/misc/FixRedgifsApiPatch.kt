@@ -8,36 +8,51 @@
 package app.morphe.patches.reddit.customclients.infinity.misc
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
-import app.morphe.patcher.methodCall
 import app.morphe.patches.reddit.customclients.fixRedgifsApiPatch
 import app.morphe.patches.reddit.customclients.infinity.InfinityCompatible
 import app.morphe.patches.reddit.customclients.infinity.misc.extension.sharedExtensionPatch
-import app.morphe.util.registersUsed
+import app.morphe.util.getReference
+import app.morphe.util.indexOfFirstInstructionOrThrow
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+
+private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/infinity/FixRedgifsApiPatch;"
 
 val fixRedgifsApiPatch = fixRedgifsApiPatch(sharedExtensionPatch) {
     compatibleWith(*InfinityCompatible)
 
     execute {
+        // 1. Hook the Redgifs token getter method to return a fresh token directly
         Fingerprint(
-            filters = listOf(
-                methodCall(
-                    definingClass = "Lokhttp3/OkHttpClient\$Builder;",
-                    name = "build",
-                    returnType = "Lokhttp3/OkHttpClient;"
-                )
-            ),
-            custom = { _, classDef ->
-                !classDef.type.startsWith("Lapp/morphe/")
-            }
-        ).matchAll().forEach { match ->
-            val index = match.instructionMatches[0].index
-            val instruction = match.instructionMatches[0].instruction
-            val builderReg = instruction.registersUsed[0]
-            match.method.replaceInstruction(
-                index,
+            strings = listOf("https://api.redgifs.com", "redgifs_access_token"),
+            returnType = "Ljava/lang/String;",
+            parameters = listOf(),
+            custom = { _, classDef -> !classDef.type.startsWith("Lapp/morphe/") }
+        ).methodOrNull?.apply {
+            addInstructions(
+                0,
                 """
-                    invoke-static { v$builderReg }, Lapp/morphe/extension/infinity/FixRedgifsApiPatch;->install(Lokhttp3/OkHttpClient${'$'}Builder;)Lokhttp3/OkHttpClient;
+                    invoke-static { }, $EXTENSION_CLASS_DESCRIPTOR->getFreshRedgifsToken()Ljava/lang/String;
+                    move-result-object v0
+                    return-object v0
+                """
+            )
+        }
+
+        // 2. Hook the Redgifs interceptor to fetch the fresh token instead of relying on stale SharedPreferences
+        Fingerprint(
+            strings = listOf("Authorization", "redgifs_access_token"),
+            custom = { _, classDef -> !classDef.type.startsWith("Lapp/morphe/") }
+        ).methodOrNull?.apply {
+            val getStringIndex = indexOfFirstInstructionOrThrow {
+                val reference = getReference<MethodReference>()
+                reference?.name == "getString" && reference.definingClass == "Landroid/content/SharedPreferences;"
+            }
+            replaceInstruction(
+                getStringIndex,
+                """
+                    invoke-static { }, $EXTENSION_CLASS_DESCRIPTOR->getFreshRedgifsToken()Ljava/lang/String;
                 """
             )
         }

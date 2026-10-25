@@ -7,7 +7,9 @@
 
 package app.morphe.extension.infinity;
 
+import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.fixes.redgifs.BaseFixRedgifsApiPatch;
+import app.morphe.extension.shared.fixes.redgifs.RedgifsTokenManager;
 import okhttp3.OkHttpClient;
 
 /**
@@ -25,5 +27,14 @@ public class FixRedgifsApiPatch extends BaseFixRedgifsApiPatch {
 
     public static OkHttpClient install(OkHttpClient.Builder builder) {
         return builder.addInterceptor(INSTANCE).build();
+    }
+
+    public static String getFreshRedgifsToken() {
+        try {
+            return RedgifsTokenManager.refreshToken(APIUtils.getUserAgent()).getAccessToken();
+        } catch (Throwable t) {
+            Logger.printException(() -> "Failed to refresh Redgifs token", t);
+            return "";
+        }
     }
 }
